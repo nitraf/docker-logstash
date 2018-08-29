@@ -3,7 +3,7 @@ Docker image with Logstash 1.5
 
 ## How to build
 ```
-git clone https://github.com/CiscoCloud/docker-logstash.git
+git clone https://github.com/nitraf/docker-logstash.git
 cd docker-logstash
 docker build -t ciscocloud/docker-logstash .
 ```
@@ -17,7 +17,7 @@ docker run --rm -it --name logstash \
 
 ## How to test
 ```
-docker pull ubuntu
+docker pull ubuntu:12.04
 docker run --rm -it --link logstash:logstash ubuntu /bin/bash
 ```
 Add to the end of your `rsyslog.conf`:

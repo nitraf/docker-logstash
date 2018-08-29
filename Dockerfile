@@ -1,11 +1,17 @@
-FROM jeanblanchard/busybox-java
+#FROM jeanblanchard/busybox-java
+FROM anapsix/alpine-java:7
 
 # Logstash version
 ENV VERSION 1.5.0
 ENV LOGSTASH_HOME /opt/logstash
 ENV GEM_PATH "$LOGSTASH_HOME/vendor/bundle/jruby/1.9"
 
-RUN opkg-install bash
+# GEM
+ENV WEBHDFS_VERSION 0.5.5
+
+#RUN opkg-install bash
+
+RUN apk add --update -t deps wget ca-certificates curl
 
 RUN curl "http://download.elastic.co/logstash/logstash/logstash-$VERSION.tar.gz" \
         | gunzip -c - | tar -xf - -C /opt && \
@@ -16,8 +22,8 @@ RUN curl "http://download.elastic.co/logstash/logstash/logstash-$VERSION.tar.gz"
 ENV PATH "$PATH:$LOGSTASH_HOME/vendor/jruby/bin"
 
 # Prerequisites for the logstash-webhdfs plugin
-RUN echo "gem \"webhdfs\"" >> "$LOGSTASH_HOME/Gemfile"
-RUN gem install -i "$GEM_PATH" webhdfs
+RUN echo "gem \"webhdfs\", \">= $WEBHDFS_VERSION\"" >> "$LOGSTASH_HOME/Gemfile"
+RUN gem install --source "http://rubygems.org/" -i "$GEM_PATH" webhdfs -v "$WEBHDFS_VERSION"
 
 COPY conf.d/* "$LOGSTASH_HOME/conf.d/"
 COPY plugins/* "$GEM_PATH/gems/logstash-core-$VERSION-java/lib/logstash/outputs/"
